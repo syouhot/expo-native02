@@ -1,17 +1,36 @@
-import AppleAuthButton from '@/components/auth/AppleAuthButton'
-import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
-import { Fonts } from '@/constants/theme'
-import React from 'react'
-import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import Animated, { FadeInDown } from 'react-native-reanimated'
+import AppleAuthButton from '@/components/auth/AppleAuthButton';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import SmoothInfiniteScroll from '@/components/SmoothInfiniteScroll';
+import { Fonts } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function Index() {
-  const openWebBrower = () => { 
+  const openWebBrower = () => {
     Linking.openURL('https://www.baidu.com/')
   }
   return (
     <View style={styles.container}>
-      <View style={styles.infiniteScrollContainer}></View>
+      <View style={styles.infiniteScrollContainer}>
+        <View>
+          <SmoothInfiniteScroll scrollDirection="down" iconSet="set1" />
+        </View>
+        <View>
+          <SmoothInfiniteScroll scrollDirection="up" iconSet="set2" />
+        </View>
+        <View>
+          <SmoothInfiniteScroll scrollDirection="down" iconSet="set3" />
+        </View>
+        <LinearGradient colors={["transparent", "#fff"]} style={{
+          position: "absolute",
+          height: 200,
+          left: 0,
+          bottom: 0,
+          right:0
+        }}/>
+      </View>
       <View style={styles.contentContainer}>
         <Image source={require('@/assets/images/wolt-logo.png')} style={styles.brandLogo} />
         <Animated.Text entering={FadeInDown} style={styles.tagline}>
@@ -60,7 +79,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   infiniteScrollContainer: {
-    flex: 0.8
+    flex: 0.8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
+    position: "relative",
+    overflow: "hidden"
   },
   tagline: {
     fontSize: 32,
