@@ -26,7 +26,7 @@ const iconDataSets = {
 };
 const ITEM_HEIGHT = 160;
 const SCROLL_SPEED = 20; // pixels per second
-const FRAME_RAME = 60; 
+const FRAME_RAME = 60;
 const GAP = 10; // gap between items from styles
 
 interface SmoothInfiniteScrollProps {
@@ -40,22 +40,24 @@ const SmoothInfiniteScroll = ({ scrollDirection = "down", iconSet = "set1" }: Sm
     const iconData = iconDataSets[iconSet]
     const items = [...iconData, ...iconData]
     const totalContentHeight = iconData.length * ITEM_HEIGHT;
-
     useEffect(() => {
-        if (scrollDirection == "up") {
+        if (scrollDirection === "up") {
             scrollY.value = totalContentHeight
         } else {
             scrollY.value = 0
         }
-
         const interval = setInterval(() => {
             const increment = (SCROLL_SPEED / FRAME_RAME) * (scrollDirection === "up" ? -1 : 1)
             scrollY.value += increment
         }, 1000 / FRAME_RAME)
 
         return () => { clearInterval(interval) }
-    }, [scrollDirection])
+    }, [scrollDirection, scrollY, totalContentHeight])
 
+    // useAnimatedReaction(() => scrollY.value, (y) => {
+    //     "worklet";
+    //     scrollTo(scrollRef, 0, y, false)
+    // })
     useAnimatedReaction(() => scrollY.value, (y) => {
         if (scrollDirection === "down") {
             if (y >= totalContentHeight) {
@@ -97,7 +99,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 20,
         marginHorizontal: 5,
-        boxShadow: "0px -2px 10px rgba(0,0,0,0.1)",
+        // boxShadow: "0px -2px 10px rgba(0,0,0,0.1)",//reactnative不支持boxshadow
+        //ios平台表示阴影属性，4个参数分别是：阴影颜色、阴影透明度、阴影半径、阴影偏移量
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: -2 },
+        elevation: 3,//安卓平台表示阴影属性，只在reactnative上有效
 
 
     }

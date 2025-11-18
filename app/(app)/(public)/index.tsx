@@ -3,6 +3,7 @@ import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import SmoothInfiniteScroll from '@/components/SmoothInfiniteScroll';
 import { Fonts } from '@/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Link } from 'expo-router';
 import React from 'react';
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -28,8 +29,8 @@ export default function Index() {
           height: 200,
           left: 0,
           bottom: 0,
-          right:0
-        }}/>
+          right: 0
+        }} />
       </View>
       <View style={styles.contentContainer}>
         <Image source={require('@/assets/images/wolt-logo.png')} style={styles.brandLogo} />
@@ -44,9 +45,11 @@ export default function Index() {
             <GoogleAuthButton />
           </Animated.Text>
           <Animated.Text entering={FadeInDown.delay(300)}>
-            <TouchableOpacity style={styles.otherButton}>
-              <Text style={styles.otherButtonText}>Other options</Text>
-            </TouchableOpacity>
+            <Link href={"/(app)/(public)/other-options"} asChild>
+              <TouchableOpacity style={styles.otherButton}>
+                <Text style={styles.otherButtonText}>Other options</Text>
+              </TouchableOpacity>
+            </Link>
           </Animated.Text>
         </View>
         <Animated.View style={styles.privacyContainer} entering={FadeInDown.delay(400)}>

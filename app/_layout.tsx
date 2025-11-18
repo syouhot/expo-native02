@@ -5,7 +5,14 @@ import { useFonts } from "expo-font";
 import { Slot } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry:1
+    }
+  }
+});
 export default function RootLayout() {
   let [fontsLoaded] = useFonts({
     Nunito_400Regular,
