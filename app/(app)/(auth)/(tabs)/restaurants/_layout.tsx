@@ -5,7 +5,7 @@ const Layout = () => {
     return (
         <Stack screenOptions={{ contentStyle: { backgroundColor: "#fff" } }}>
             <Stack.Screen name='index' options={{
-                    headerShown:true
+                    headerShown:false
             }} />
         </Stack>
     )
