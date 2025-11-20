@@ -38,10 +38,14 @@ const ResaturantHeader = ({ title, scrollOffset }: ResaturantHeaderProps) => {
         const translateY = interpolate(
             scrollOffset.value,
             [SCROLL_THRESHOLD * 0.3, SCROLL_THRESHOLD],
-            [-10, -0],
+            [-10, 0],
             Extrapolation.CLAMP
         )
-        return { opacity, transform: [{ translateY }] }
+        return {
+            opacity,
+            transform: [{ translateY }],
+            display: opacity === 0 ? 'none' : 'flex',
+        }
     })
 
     const shadowStyle = useAnimatedStyle(() => {
@@ -54,7 +58,7 @@ const ResaturantHeader = ({ title, scrollOffset }: ResaturantHeaderProps) => {
 
         return {
             shadowOpacity: opacity * 0.1,
-            elevation: opacity * 4
+            elevation: opacity * 4,            
         }
     })
     return (
@@ -75,9 +79,11 @@ const ResaturantHeader = ({ title, scrollOffset }: ResaturantHeaderProps) => {
                             <Ionicons name="filter" size={24} />
                         </TouchableOpacity>
                     </Link>
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="map-outline" size={24} />
-                    </TouchableOpacity>
+                    <Link href={'/(app)/(auth)/(modal)/map'} asChild>
+                        <TouchableOpacity style={styles.iconButton}>
+                            <Ionicons name="map-outline" size={24} />
+                        </TouchableOpacity>
+                    </Link>
                 </View>
             </Animated.View>
             {/* header2 */}
