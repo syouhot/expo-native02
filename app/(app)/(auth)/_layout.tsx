@@ -1,15 +1,30 @@
+import { Stack } from '@/components/Stack'
 import { Colors } from '@/constants/theme'
 import { Ionicons } from '@expo/vector-icons'
-import { Stack, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
+import Transition from 'react-native-screen-transitions'
+
+
 
 export default function Layout() {
     const router = useRouter()
     return (
         <Stack>
             <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-            <Stack.Screen name='(modal)/map' options={{ headerShown: false }} />
+            <Stack.Screen name='(modal)/(restaurant)/[id]'
+                options={{
+                    headerShown: false,
+                    ...Transition.presets.DraggableCard()
+                }}
+            />
+            <Stack.Screen name='(modal)/map'
+                options={{
+                    headerShown: false,
+                    ...Transition.presets.SharedAppleMusic()
+                }}
+            />
             <Stack.Screen
                 name='(modal)/location'
                 options={{
@@ -39,7 +54,7 @@ export default function Layout() {
                     sheetGrabberVisible: true,
                     headerShadowVisible: false,
                     contentStyle: {
-                        backgroundColor:"#fff"
+                        backgroundColor: "#fff"
                     },
                     //安卓这里没有显示出来
                     headerRight: () => (

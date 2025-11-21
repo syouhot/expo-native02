@@ -11,7 +11,7 @@ import * as Location from 'expo-location';
 import { AppleMaps, GoogleMaps } from "expo-maps";
 import { AppleMapsMapType } from "expo-maps/build/apple/AppleMaps.types";
 import { Link, useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const Page = () => {
@@ -20,6 +20,8 @@ const Page = () => {
     const mapRef = useRef<AppleMaps.MapView | GoogleMaps.MapView>(null);
     const { data: restaurants, isLoading: restaurantsLoading } = useRestaurants()
     const { data: restaurantsMarkers, isLoading: restaurantsMarkersLoading } = useRestaurantMarkers()
+
+    const [onMapLoaded, setOnMapLoaded] = useState(false);
     const [initialPosition, setInitialPosition] = useState<{
         android?: {
             target: { latitude: number, longitude: number },
@@ -36,7 +38,15 @@ const Page = () => {
             longitude: number,
         }
     }
-    const markers: markerNew[] = restaurantsMarkers?.map((marker) => ({
+    const handlerClose = () => {
+        // 在关闭前清理地图状态
+        setOnMapLoaded(false);
+        // 延迟关闭，给地图组件足够时间进行清理
+        setTimeout(() => {
+            router.dismiss();
+        }, 300);
+    }
+    const markers: markerNew[] = useMemo(() => restaurantsMarkers?.map((marker) => ({
         id: marker.id,
         systemImage: "circle.fill",
         tintColor: Colors.muted,
@@ -49,18 +59,11 @@ const Page = () => {
             longitude: marker.longitude,
         },
         title: marker.name
-    })) || [];
+    })) || [], [restaurantsMarkers]);
     const locateMe = async () => {
         try {
             if (Platform.OS === "ios") {
                 const location = await Location.getCurrentPositionAsync();
-                // (mapRef.current as AppleMaps.MapView)?.setCameraPosition({
-                //     coordinates: {
-                //         latitude: location.coords.latitude,
-                //         longitude: location.coords.longitude,
-                //     },
-                //     zoom: 14,
-                // })
                 setInitialPosition({
                     ios: {
                         // target: { latitude: 51.9625, longitude: 7.6257 },
@@ -69,9 +72,6 @@ const Page = () => {
                     }
                 });
             } else {
-                initSDK({
-                    androidKey: 'd172741818ae3f3156c1559bc710f080',
-                });
                 const location = await getCurrentLocation();
                 setInitialPosition({
                     android: {
@@ -86,6 +86,11 @@ const Page = () => {
         }
     }
     useEffect(() => {
+        if (Platform.OS === "android") {
+            initSDK({
+                androidKey: 'd172741818ae3f3156c1559bc710f080',
+            });
+        }
         async function getCurrentLocation() {
             let { status } = await Location.requestForegroundPermissionsAsync()
             if (status !== 'granted') {
@@ -95,7 +100,23 @@ const Page = () => {
             locateMe()
         }
         getCurrentLocation()
+        
+        // 添加清理函数
+        return () => {
+            setOnMapLoaded(false)
+            // 清理地图引用
+            if (mapRef.current) {
+                mapRef.current = null;
+            }
+        }
     }, [markers])
+    const markerSelected = (e: any) => {
+        router.push({
+            pathname: "/(app)/(auth)/(modal)/(restaurant)/[id]",
+            params: { id: e.id }
+        })
+    }
+
     if (restaurantsLoading || restaurantsMarkersLoading) {
         return (
             <View>
@@ -108,18 +129,11 @@ const Page = () => {
         )
     }
 
-    const markerSelected = (e: any) => {
-        router.push({
-            pathname: "/(app)/(auth)/(modal)/(restaurant)/[id]",
-            params: { id: e.id }
-        })
-    }
-
     if (Platform.OS === "ios") {
         return (
             <>
                 <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <TouchableOpacity style={styles.backButton} onPress={() => router.dismiss()}>
+                    <TouchableOpacity style={styles.backButton} onPress={handlerClose}>
                         <Ionicons name="chevron-back" color={Colors.muted} size={22} />
                     </TouchableOpacity>
                     <View style={styles.headerRight}>
@@ -197,7 +211,7 @@ const Page = () => {
             // </View>
             initialPosition && markers && <>
                 <View style={[styles.header, { paddingTop: insets.top }]}>
-                    <TouchableOpacity style={styles.backButton} onPress={() => router.dismiss()}>
+                    <TouchableOpacity style={styles.backButton} onPress={handlerClose}>
                         <Ionicons name="chevron-back" color={Colors.muted} size={22} />
                     </TouchableOpacity>
                     <View style={styles.headerRight}>
@@ -214,13 +228,14 @@ const Page = () => {
                 <MapView
                     initialCameraPosition={initialPosition?.android}
                     myLocationEnabled={true}
+                    onLoad={() => setOnMapLoaded(true)}
                     style={{ flex: 1, padding: 10 }} >
-                    {markers.map((marker) => (
+                    {onMapLoaded &&markers.length > 0 && markers.map((marker) => (
                         <Marker
                             key={marker.id}
                             position={marker.latlong}
                             title={marker.title}
-                            draggable={true}
+                            draggable={false}
                         />
                     ))}
                 </MapView>
@@ -269,7 +284,7 @@ const Page = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingBottom:10
+        paddingBottom: 10
     },
     header: {
         position: "absolute",
