@@ -1,3 +1,4 @@
+import ViewOrderButton from '@/components/buttons/ViewOrderButton'
 import MenuItem from '@/components/MenuItem'
 import RestaurantDetailsHeader from '@/components/RestaurantDetailsHeader'
 import { Colors } from '@/constants/theme'
@@ -11,7 +12,6 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, SectionList, StyleShe
 import Animated, { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Path } from 'react-native-svg'
-
 const { width } = Dimensions.get("window")
 const IMAGE_HEIGHT = 300;
 const STICKY_THRESHOLD_START = 260;
@@ -35,7 +35,7 @@ const Page = () => {
     })) || []
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
-            scrollOffset.value = event.contentOffset.y;
+            scrollOffset.value = event.contentOffset.y+100;
         },
     });
     const parallaxStyle = useAnimatedStyle(() => {
@@ -79,10 +79,10 @@ const Page = () => {
     const handleCategoryPress = (index: number) => {
         setActiveCategory(index);
         sectionListRef.current?.scrollToLocation({
-            sectionIndex: index,
-            itemIndex: 0,
-            animated: true,
-            viewOffset: insets.top + 100,
+            sectionIndex: index ,
+            itemIndex: 1,
+            animated: false,
+            viewOffset: insets.top - 100,
         });
 
         scrollCategoryTabIntoView(index);
@@ -229,6 +229,8 @@ const Page = () => {
                     </>
                 }
             />
+
+            <ViewOrderButton restaurant={restaurant} />
         </View>
     )
 }

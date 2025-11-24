@@ -2,10 +2,9 @@ import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 interface RestaurantDetailsHeaderProps {
     scrollOffset: SharedValue<number>;
 }
@@ -62,7 +61,7 @@ const RestaurantDetailsHeader = ({ scrollOffset }: RestaurantDetailsHeaderProps)
     const buttonStyle2 = useAnimatedStyle(() => {
         const opacity = interpolate(
             scrollOffset.value,
-            [SCROLL_THRESHOLD_START*0.3, SCROLL_THRESHOLD_END],
+            [SCROLL_THRESHOLD_START * 0.3, SCROLL_THRESHOLD_END],
             [0, 1],
             Extrapolation.CLAMP,
         )
@@ -96,9 +95,26 @@ const RestaurantDetailsHeader = ({ scrollOffset }: RestaurantDetailsHeaderProps)
                 <Animated.View style={[styles.iconButton, buttonStyle]}>
                     <Ionicons name="heart-outline" size={24} />
                 </Animated.View>
-                <Animated.View style={[styles.iconButton, buttonStyle2]}>
-                    <Ionicons name="ellipsis-horizontal" size={24} />
-                </Animated.View>
+                {
+                    Platform.OS === 'ios' &&
+                    (
+                        <Animated.View style={[styles.iconButton, buttonStyle2]} >
+                            <TouchableOpacity onPress={() => console.log('ios pressed')}>
+                                <Ionicons name="ellipsis-horizontal" size={24} />
+                            </TouchableOpacity>
+                        </Animated.View>
+                    )
+                }
+                {
+                    Platform.OS === 'android' &&
+                    (
+                        <Animated.View style={[styles.iconButton, buttonStyle2]}>
+                            <TouchableOpacity onPress={() => console.log('android pressed')}>
+                                <Ionicons name="ellipsis-horizontal" size={24} />
+                            </TouchableOpacity>
+                        </Animated.View>
+                    )
+                }
             </View>
         </Animated.View>
     )

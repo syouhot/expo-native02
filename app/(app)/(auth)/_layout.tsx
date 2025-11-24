@@ -19,6 +19,21 @@ export default function Layout() {
                     ...Transition.presets.DraggableCard()
                 }}
             />
+            <Stack.Screen
+                name='(modal)/(menu)/[id]'
+                options={{
+                    presentation: "formSheet",
+                    title: "",
+                    sheetAllowedDetents: [0.9],
+                    sheetCornerRadius: 16,
+                    sheetGrabberVisible: true,
+                    headerShadowVisible: false,
+                    sheetExpandsWhenScrolledToEdge: true,
+                    headerShown:false,
+                    contentStyle: {
+                        backgroundColor: "#fff"
+                    },
+                }} />
             <Stack.Screen name='(modal)/map'
                 options={{
                     headerShown: false,
@@ -65,6 +80,13 @@ export default function Layout() {
                             <Ionicons name="close-sharp" size={24} />
                         </TouchableOpacity>
                     ),
+                }} />
+            <Stack.Screen
+                name='order'
+                options={{
+                    headerShown: false,
+                    enableTransitions:true,
+                    ...Transition.presets.SharedXImage()
                 }} />
         </Stack>
     )
