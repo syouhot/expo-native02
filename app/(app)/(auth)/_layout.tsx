@@ -86,7 +86,7 @@ export default function Layout() {
                 options={{
                     headerShown: false,
                     enableTransitions:true,
-                    ...Transition.presets.SharedXImage()
+                    // ...Transition.presets.SharedXImage()
                 }} />
         </Stack>
     )
